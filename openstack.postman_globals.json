@@ -1,0 +1,54 @@
+{
+	"id": "cb361fd6-846f-4383-841c-0065dc5c2924",
+	"values": [
+		{
+			"key": "token",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "url_compute",
+			"value": "https://<openstack-host>:8774/v2.1",
+			"enabled": true
+		},
+		{
+			"key": "url_identity",
+			"value": "https://<openstack-host>:5000",
+			"enabled": true
+		},
+		{
+			"key": "url_metric",
+			"value": "https://<openstack-host>:8041",
+			"enabled": true
+		},
+		{
+			"key": "url_orchestration",
+			"value": "https://<openstack-host>:8004/v1/9667d05026e4406c85d6093ce12b2e41",
+			"enabled": true
+		},
+		{
+			"key": "domain_turktelekom",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "project_cloudzone1",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "user_cloud-admin",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "role_admin",
+			"value": "",
+			"enabled": true
+		}
+	],
+	"name": "openstack Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2021-10-07T04:18:59.438Z",
+	"_postman_exported_using": "Postman/9.0.5"
+}

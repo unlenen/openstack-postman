@@ -1,0 +1,895 @@
+{
+	"info": {
+		"_postman_id": "b6d3a6bc-2a0d-4f95-b798-4d85b0c3afbe",
+		"name": "openstack",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "KEYSTONE_getToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"X-Subject-Token is present\", function () {\r",
+							"    pm.response.to.have.header(\"X-Subject-Token\");\r",
+							"});\r",
+							"\r",
+							"token = pm.response.headers.get(\"X-Subject-Token\");\r",
+							"tests[\"Token : \" + token] = true;\r",
+							"postman.setGlobalVariable(\"token\", token);\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"catalog = jsonData[\"token\"][\"catalog\"]\r",
+							"for (var i = 0; i < catalog.length; i++) {\r",
+							"    if (catalog[i][\"type\"] === \"compute\") {\r",
+							"        postman.setGlobalVariable(\"url_compute\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Compute Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"    if (catalog[i][\"type\"] === \"identity\") {\r",
+							"        postman.setGlobalVariable(\"url_identity\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Identity Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"    if (catalog[i][\"type\"] === \"orchestration\") {\r",
+							"        postman.setGlobalVariable(\"url_orchestration\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Orchestration Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"     if (catalog[i][\"type\"] === \"metric\") {\r",
+							"        postman.setGlobalVariable(\"url_metric\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Metric Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": " application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"auth\": {\r\n    \"identity\": {\r\n      \"methods\": [\"password\"],\r\n      \"password\": {\r\n        \"user\": {\r\n          \"name\": \"admin\",\r\n          \"domain\": { \"name\": \"admin_domain\" },\r\n          \"password\": \"argela\"\r\n        }\r\n      }\r\n    },\r\n    \"scope\": {\r\n      \"project\": {\r\n        \"name\": \"admin\",\r\n        \"domain\": { \"name\": \"admin_domain\" }\r\n      }\r\n    }\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "https://192.168.134.142:5000/v3/auth/tokens",
+					"protocol": "https",
+					"host": [
+						"192",
+						"168",
+						"134",
+						"142"
+					],
+					"port": "5000",
+					"path": [
+						"v3",
+						"auth",
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KEYSTONE_getTokenWithCredential",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"X-Subject-Token is present\", function () {\r",
+							"    pm.response.to.have.header(\"X-Subject-Token\");\r",
+							"});\r",
+							"\r",
+							"token = pm.response.headers.get(\"X-Subject-Token\");\r",
+							"tests[\"Token : \" + token] = true;\r",
+							"postman.setGlobalVariable(\"token\", token);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": " application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"auth\": {\r\n        \"identity\": {\r\n            \"methods\": [\r\n                \"application_credential\"\r\n            ],\r\n            \"application_credential\": {\r\n                \"id\": \"5503da2932f34ddf9f48f9f26d29d860\",\r\n                \"secret\": \"aa17a3b6f65dd01aabedc5c7afd47ea8\"\r\n            }\r\n        }\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "https://192.168.134.142:5000/v3/auth/tokens",
+					"protocol": "https",
+					"host": [
+						"192",
+						"168",
+						"134",
+						"142"
+					],
+					"port": "5000",
+					"path": [
+						"v3",
+						"auth",
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KEYSTONE_getCatalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"catalog = jsonData[\"token\"][\"catalog\"]\r",
+							"for (var i = 0; i < catalog.length; i++) {\r",
+							"    if (catalog[i][\"type\"] === \"compute\") {\r",
+							"        postman.setGlobalVariable(\"url_compute\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Compute Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"    if (catalog[i][\"type\"] === \"identity\") {\r",
+							"        postman.setGlobalVariable(\"url_identity\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Identity Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"    if (catalog[i][\"type\"] === \"orchestration\") {\r",
+							"        postman.setGlobalVariable(\"url_orchestration\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Orchestration Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"     if (catalog[i][\"type\"] === \"metric\") {\r",
+							"        postman.setGlobalVariable(\"url_metric\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Metric Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_identity}}/auth/catalog",
+					"host": [
+						"{{url_identity}}"
+					],
+					"path": [
+						"auth",
+						"catalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KEYSTONE_getEndpoints",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"catalog = jsonData[\"token\"][\"catalog\"]\r",
+							"for (var i = 0; i < catalog.length; i++) {\r",
+							"    if (catalog[i][\"type\"] === \"compute\") {\r",
+							"        postman.setGlobalVariable(\"url_compute\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Compute Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"    if (catalog[i][\"type\"] === \"identity\") {\r",
+							"        postman.setGlobalVariable(\"url_identity\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Identity Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"    if (catalog[i][\"type\"] === \"orchestration\") {\r",
+							"        postman.setGlobalVariable(\"url_orchestration\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Orchestration Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"     if (catalog[i][\"type\"] === \"metric\") {\r",
+							"        postman.setGlobalVariable(\"url_metric\", catalog[i][\"endpoints\"][0][\"url\"]);\r",
+							"        tests[\"Metric Url : \" + catalog[i][\"endpoints\"][0][\"url\"]] = true;\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_identity}}/endpoints",
+					"host": [
+						"{{url_identity}}"
+					],
+					"path": [
+						"endpoints"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KEYSTONE_getDomains",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"domains = jsonData[\"domains\"]\r",
+							"for (var i = 0; i < domains.length; i++) {\r",
+							"    if (domains[i][\"name\"] === \"turktelekom\") {\r",
+							"        postman.setGlobalVariable(\"domain_turktelekom\", domains[i][\"id\"]);\r",
+							"        tests[\"Domain Turktelekom : \" +  domains[i][\"id\"]] = true;\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_identity}}/domains",
+					"host": [
+						"{{url_identity}}"
+					],
+					"path": [
+						"domains"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KEYSTONE_getProjects",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"projects = jsonData[\"projects\"]\r",
+							"for (var i = 0; i < projects.length; i++) {\r",
+							"    if (projects[i][\"name\"] === \"cloud-zone-1\") {\r",
+							"        postman.setGlobalVariable(\"project_cloudzone1\", projects[i][\"id\"]);\r",
+							"        tests[\"Project cloud-zone-1 : \" +  projects[i][\"id\"]] = true;\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_identity}}/projects?domain_id={{domain_turktelekom}}",
+					"host": [
+						"{{url_identity}}"
+					],
+					"path": [
+						"projects"
+					],
+					"query": [
+						{
+							"key": "domain_id",
+							"value": "{{domain_turktelekom}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KEYSTONE_getUsers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"users = jsonData[\"users\"]\r",
+							"for (var i = 0; i < users.length; i++) {\r",
+							"    if (users[i][\"name\"] === \"cloud-admin\") {\r",
+							"        postman.setGlobalVariable(\"user_cloud-admin\", users[i][\"id\"]);\r",
+							"        tests[\"User cloud-zone-1 : \" +  users[i][\"id\"]] = true;\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_identity}}/users?domain_id={{domain_turktelekom}}",
+					"host": [
+						"{{url_identity}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "domain_id",
+							"value": "{{domain_turktelekom}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KEYSTONE_getRoles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"roles = jsonData[\"roles\"]\r",
+							"for (var i = 0; i < roles.length; i++) {\r",
+							"    if (roles[i][\"name\"] === \"Admin\") {\r",
+							"        postman.setGlobalVariable(\"role_admin\", roles[i][\"id\"]);\r",
+							"        tests[\"Role admin : \" +  roles[i][\"id\"]] = true;\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_identity}}/roles",
+					"host": [
+						"{{url_identity}}"
+					],
+					"path": [
+						"roles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KEYSTONE_addRoleToDomain",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_identity}}/domains/{{domain_turktelekom}}/users/{{user_cloud-admin}}/roles/{{role_admin}}",
+					"host": [
+						"{{url_identity}}"
+					],
+					"path": [
+						"domains",
+						"{{domain_turktelekom}}",
+						"users",
+						"{{user_cloud-admin}}",
+						"roles",
+						"{{role_admin}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KEYSTONE_addRoleToProject",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "gAAAAABgW0UrZk-0iy9BWbJwVMf1oSZvPqkwJXDrahyRaZIb1vh0a1rrXntKrlEmsZgmJ6SguyT46ILte8RWctLLyeyvhzm1yvsgfrR-Ecok0pPxGV-tFZHDv2KAdzHKGiX9291jgGG9ZZ2U8MyDFFHqEQbNtUk2-p0xaZTpIIrKtRz_LCoIFl0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_identity}}/projects/{{project_cloudzone1}}/users/{{user_cloud-admin}}/roles/{{role_admin}}",
+					"host": [
+						"{{url_identity}}"
+					],
+					"path": [
+						"projects",
+						"{{project_cloudzone1}}",
+						"users",
+						"{{user_cloud-admin}}",
+						"roles",
+						"{{role_admin}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "HEAT_getStacks",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_orchestration}}/stacks?project={{project_cloudzone1}}",
+					"host": [
+						"{{url_orchestration}}"
+					],
+					"path": [
+						"stacks"
+					],
+					"query": [
+						{
+							"key": "project",
+							"value": "{{project_cloudzone1}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NOVA_getServers",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_compute}}/servers/detail?all_tenants=true&project_id={{project_cloudzone1}}&tags=metering.server_group: 3832f93e-9c72-43cd-bb97-5f5276ba41b4",
+					"host": [
+						"{{url_compute}}"
+					],
+					"path": [
+						"servers",
+						"detail"
+					],
+					"query": [
+						{
+							"key": "all_tenants",
+							"value": "true"
+						},
+						{
+							"key": "project_id",
+							"value": "{{project_cloudzone1}}"
+						},
+						{
+							"key": "tags",
+							"value": "metering.server_group: 3832f93e-9c72-43cd-bb97-5f5276ba41b4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Panko",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_compute}}/servers/detail?all_tenants=true&project_id={{project_cloudzone1}}&tags=metering.server_group: 3832f93e-9c72-43cd-bb97-5f5276ba41b4",
+					"host": [
+						"{{url_compute}}"
+					],
+					"path": [
+						"servers",
+						"detail"
+					],
+					"query": [
+						{
+							"key": "all_tenants",
+							"value": "true"
+						},
+						{
+							"key": "project_id",
+							"value": "{{project_cloudzone1}}"
+						},
+						{
+							"key": "tags",
+							"value": "metering.server_group: 3832f93e-9c72-43cd-bb97-5f5276ba41b4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NOVA_getFlavors",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_compute}}/flavors",
+					"host": [
+						"{{url_compute}}"
+					],
+					"path": [
+						"flavors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NOVA_getUsage",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url_compute}}/os-simple-tenant-usage/{{project_cloudzone1}}",
+					"host": [
+						"{{url_compute}}"
+					],
+					"path": [
+						"os-simple-tenant-usage",
+						"{{project_cloudzone1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Generic",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "gAAAAABgRyyAD3fThQURq7GTiP42F5AoMRau8_uI2HSpWECfT8UpIjVVtzefltoCVVydDOlKoAWuTJ_vZmk6SRhGBse1Ba89cuW5gbfvNFjpVL3GYlSRm8TBJ62R8jG6xLVYh5-EHixFhPId_0mFMZmmJgb07yMQ36oQgxyt0EP-REHvluQ5cnQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://192.168.134.110:8774/v2.1/servers/detail",
+					"protocol": "https",
+					"host": [
+						"192",
+						"168",
+						"134",
+						"110"
+					],
+					"port": "8774",
+					"path": [
+						"v2.1",
+						"servers",
+						"detail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GNOCCHI_metric_cpu",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": " gzip, deflate",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": " application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"operations\":  [\r\n    \"/\",\r\n    [\r\n      \"aggregate\",\r\n      \"mean\",\r\n      [\r\n        \"metric\",\r\n        \"cpu\",\r\n        \"rate:mean\"\r\n      ]\r\n    ],\r\n    150000000\r\n  ],\r\n  \"resource_type\": \"instance\",\r\n  \"search\": {\r\n    \"=\": {\r\n      \"server_group\": \"971bde47-f96c-4e94-9bfb-0940eca51663\"\r\n    }\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "{{url_metric}}/v1/aggregates?granularity=60",
+					"host": [
+						"{{url_metric}}"
+					],
+					"path": [
+						"v1",
+						"aggregates"
+					],
+					"query": [
+						{
+							"key": "granularity",
+							"value": "60"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GNOCCHI_metric_memory",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"type": "text",
+						"value": " gzip, deflate"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": " application/json"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": " application/json"
+					},
+					{
+						"key": "X-Auth-Token",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"operations\":  \r\n    [\r\n      \"aggregate\",\r\n      \"mean\",\r\n      [\r\n        \"metric\",\r\n        \"memory.usage\",\r\n        \"mean\"\r\n      ]\r\n    ],\r\n  \"resource_type\": \"instance\",\r\n  \"search\": {\r\n    \"=\": {\r\n      \"server_group\": \"971bde47-f96c-4e94-9bfb-0940eca51663\"\r\n    }\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "{{url_metric}}/v1/aggregates?granularity=60",
+					"host": [
+						"{{url_metric}}"
+					],
+					"path": [
+						"v1",
+						"aggregates"
+					],
+					"query": [
+						{
+							"key": "granularity",
+							"value": "60"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GNOCCHI_metric_usage",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"type": "text",
+						"value": " gzip, deflate"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": " application/json"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": " application/json"
+					},
+					{
+						"key": "X-Auth-Token",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"operations\": [\r\n        \"/\",\r\n        [\r\n            \"metric\",\r\n            \"cpu\",\r\n            \"rate:mean\"\r\n        ],\r\n        150000000\r\n    ],\r\n    \"resource_type\": \"instance\",\r\n    \"search\": {\r\n        \"=\": {\r\n            \"server_group\": \"3832f93e-9c72-43cd-bb97-5f5276ba41b4\"\r\n        }\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "{{url_metric}}/v1/aggregates?granularity=60",
+					"host": [
+						"{{url_metric}}"
+					],
+					"path": [
+						"v1",
+						"aggregates"
+					],
+					"query": [
+						{
+							"key": "granularity",
+							"value": "60"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
